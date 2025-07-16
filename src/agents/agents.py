@@ -5,7 +5,7 @@ from typing import Literal
 from types import FunctionType
 
 import requests
-from langchain_aws.chat_models.bedrock_converse import ChatBedrockConverse
+from langchain_core.language_models.chat_models import BaseChatModel
 from langchain.tools import tool
 from langgraph.types import Command
 from langgraph.graph import END
@@ -14,7 +14,7 @@ from langgraph.prebuilt import create_react_agent
 from .state import State, Router
 
 
-def get_task_router_node(llm: ChatBedrockConverse) -> FunctionType:
+def get_task_router_node(llm: BaseChatModel) -> FunctionType:
     TASK_ROUTER_PROMPT = """
     You are a task router tasked with managing a conversation between the following workers:
                                   "joker", "stock_information_retriever", "stock_correlation_retriever", "crash_predictor".
@@ -40,7 +40,7 @@ def get_task_router_node(llm: ChatBedrockConverse) -> FunctionType:
     return task_router_node
 
 
-def get_joker_node(llm: ChatBedrockConverse) -> FunctionType:
+def get_joker_node(llm: BaseChatModel) -> FunctionType:
     @tool
     def give_a_joke() -> str:
         """Give a joke."""
@@ -61,7 +61,7 @@ def get_joker_node(llm: ChatBedrockConverse) -> FunctionType:
     return joker_node
 
 
-def get_stock_information_retriever_node(llm: ChatBedrockConverse) -> FunctionType:
+def get_stock_information_retriever_node(llm: BaseChatModel) -> FunctionType:
     @tool
     def stock_information_retriever(symbol: str, startdate: str, enddate: str) -> str:
         """Compute information for a given stock with a given date range, with dates in the format YYYY-mm-dd."""
@@ -88,7 +88,7 @@ def get_stock_information_retriever_node(llm: ChatBedrockConverse) -> FunctionTy
     return stock_information_retriever_node
 
 
-def get_stock_correlation_retriever_node(llm: ChatBedrockConverse) -> FunctionType:
+def get_stock_correlation_retriever_node(llm: BaseChatModel) -> FunctionType:
     @tool
     def stock_correlation_retriever(symbol1: str, symbol2: str, startdate: str, enddate: str) -> str:
         """Compute the correlation between two stocks with a given date range, with dates in the format YYYY-mm-dd."""
@@ -116,7 +116,7 @@ def get_stock_correlation_retriever_node(llm: ChatBedrockConverse) -> FunctionTy
     return stock_correlation_retriever_node
 
 
-def get_crash_predictor_node(llm: ChatBedrockConverse) -> FunctionType:
+def get_crash_predictor_node(llm: BaseChatModel) -> FunctionType:
     @tool
     def crash_predictor(symbol: str = "^GSPC", startdate: str = None, enddate: str = None) -> str:
         """Compute the potential crash date for either a given stock or S&P 500.
