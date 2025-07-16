@@ -1,1 +1,8 @@
 python-telegram-bot
+langchain-community
+langchain-core
+langchain[aws]
+langchain-tavily
+langgraph
+python-dotenv
+boto3
