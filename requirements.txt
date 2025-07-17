@@ -1,8 +1,7 @@
-python-telegram-bot
+pyTelegramBotAPI
 langchain-community
 langchain-core
 langchain[aws]
-langchain-tavily
 langgraph
 python-dotenv
 boto3
