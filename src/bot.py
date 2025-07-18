@@ -1,6 +1,7 @@
 
 import os
 import sys
+import urllib
 
 import telebot
 from dotenv import load_dotenv
@@ -35,15 +36,24 @@ def process_user_input_with_agent(message: telebot.types.Message):
         print(f"Time elapsed: {current_time - starttime} sec", file=sys.stderr)
         print(value, file=sys.stderr)
         if 'messages' in value:
-            for message in value['messages']:
-                print(message, file=sys.stderr)
-                print(type(message), file=sys.stderr)
-                if isinstance(message, AIMessage):
-                    if isinstance(message.content, str):
-                        yield message.content
-                    elif isinstance(message.content, list):
-                        for content in message.content:
+            for agent_message in value['messages']:
+                print(agent_message, file=sys.stderr)
+                print(type(agent_message), file=sys.stderr)
+                if isinstance(agent_message, AIMessage):
+                    if isinstance(agent_message.content, str):
+                        bot.reply_to(message, agent_message.content)
+                    elif isinstance(agent_message.content, list):
+                        for content in agent_message.content:
                             if content['type'] == 'text':
-                                yield "-->" + content['text']
+                                bot.reply_to(
+                                    message,
+                                    "-->" + content['text']
+                                )
                             elif content['type'] == 'image_url':
-                                yield f"Image URL: {content['image_url']}"
+                                image_file = urllib.request.urlopen(content['image_url'])
+                                bot.send_photo(
+                                    message.chat.id,
+                                    image_file,
+                                    "",
+                                    reply_to_message_id=message.id
+                                )
