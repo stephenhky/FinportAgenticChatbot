@@ -29,7 +29,6 @@ def process_user_input_with_agent(message: telebot.types.Message):
     # process message
     input_text = message.text
     starttime = time()
-    # TODO: make it to reply
     for value in agent.stream_graph_updates(input_text):
         print("======================", file=sys.stderr)
         current_time = time()
@@ -57,3 +56,5 @@ def process_user_input_with_agent(message: telebot.types.Message):
                                     "",
                                     reply_to_message_id=message.id
                                 )
+    endtime = time()
+    print(f"Total time elapsed: {endtime - starttime} sec")
