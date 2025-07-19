@@ -52,9 +52,10 @@ def handler(event, context):
     """
 
     # Telegram sends a POST request with the update in the body
-    body = json.loads(event.get("body", "{}"))
+    print(event)
+    print(type(event))
     # Process the update with your bot logic
-    message = event['body']
+    message = json.loads(event['body'])
     try:
         if message.get('polling', False):
             return bot_polling()

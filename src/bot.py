@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 from time import time
 from langchain_core.messages import AIMessage
 
-from .agents.graph import FinportAgent
-from .agents.aws import get_aws_bedrock_llm
+from agents.graph import FinportAgent
+from agents.aws import get_aws_bedrock_llm
 
 
 load_dotenv()

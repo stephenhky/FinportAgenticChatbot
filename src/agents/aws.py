@@ -14,8 +14,8 @@ def get_aws_bedrock_llm(bedrock_llm_id: str=None) -> ChatBedrockConverse:
         service_name="bedrock-runtime",
         region_name="us-east-1",
         config=Config(read_timeout=1024),
-        aws_access_key_id=os.environ.get("AWS_ACC_ACCESS_TOKEN"),
-        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY")
+        # aws_access_key_id=os.environ.get("AWS_ACC_ACCESS_TOKEN"),
+        # aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY")
     )
     llm = init_chat_model(
         os.environ.get("BEDROCK_LLM_ID") if bedrock_llm_id is None else bedrock_llm_id,
