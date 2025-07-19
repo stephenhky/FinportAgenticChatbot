@@ -1,9 +1,13 @@
 FROM public.ecr.aws/lambda/python:3.10
 
-COPY requirements.txt ${LAMBDA_TASK_ROOT}
+ADD src/ /code
+
+WORKDIR /code
+
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY src/ ${LAMBDA_TASK_ROOT}
+ENV PYTHONPATH=.
 
-CMD [ "main.lambda_handler" ]
+CMD [ "main.handler" ]

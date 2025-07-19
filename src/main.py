@@ -5,7 +5,7 @@ import traceback
 
 import telebot
 
-from . import bot
+from bot import bot
 
 
 def bot_polling():
