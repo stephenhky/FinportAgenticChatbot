@@ -18,6 +18,8 @@ load_dotenv()
 telegram_api_key = os.environ.get("API_KEY")
 bot = telebot.TeleBot(telegram_api_key, threaded=False)
 
+MAX_RETRIES = 20
+
 
 @bot.message_handler(func=lambda message: True)
 def process_user_input_with_agent(message: telebot.types.Message):
@@ -29,6 +31,7 @@ def process_user_input_with_agent(message: telebot.types.Message):
     # process message
     input_text = message.text
     starttime = time()
+    nb_retries = 0
     for value in agent.stream_graph_updates(input_text):
         print("======================", file=sys.stderr)
         current_time = time()
@@ -56,5 +59,12 @@ def process_user_input_with_agent(message: telebot.types.Message):
                                     "",
                                     reply_to_message_id=message.id
                                 )
+        nb_retries += 1
+        print(f"Number of retries: {nb_retries}", file=sys.stderr)
+        if nb_retries > MAX_RETRIES:
+            print("Quitting the loop and tell the user.", file=sys.stderr)
+            bot.send_message(message.chat.id, "I am in a dead loop! I am stopping now!")
+            break
+
     endtime = time()
     print(f"Total time elapsed: {endtime - starttime} sec")

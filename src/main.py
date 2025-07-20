@@ -4,6 +4,7 @@ import json
 import traceback
 
 import telebot
+from botocore.exceptions import ClientError
 
 from bot import bot
 
@@ -30,12 +31,28 @@ def bot_webhook(message):
                 'body': json.dumps({'approach': 'webhook'})
             }
         except AttributeError:
+            bot.send_message(message.chat.id, "API error!")
             print('Telegram error.', file=sys.stderr)
             print(traceback.format_exc(), file=sys.stderr)
             return {
-                'statusCode': 400,
+                'statusCode': 200,
                 'body': json.dumps({'approach': 'webhook'})
             }
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'ThrottlingException':
+                print("Infinite loop.", file=sys.stderr)
+                print(traceback.format_exc(), file=sys.stderr)
+                bot.send_message(message.chat.id, "I am in a dead loop! I am stopping now!")
+                return {
+                    'statusCode': 200,
+                    'body': json.dumps({'approach': 'webhook', 'text': 'Loop!'})
+                }
+            else:
+                bot.send_message(message.chat.id, "Unknown error!")
+                return {
+                    'statusCode': 200,
+                    'body': json.dumps({'approach': 'webhook', 'text': 'Loop!'})
+                }
     else:
         return {
             'statusCode': 500,
