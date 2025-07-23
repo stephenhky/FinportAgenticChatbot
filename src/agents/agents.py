@@ -54,9 +54,9 @@ def get_joker_node(llm: BaseChatModel) -> FunctionType:
         """
     )
 
-    def joker_node(state: State) -> Command[Literal["task_router"]]:
+    def joker_node(state: State) -> Command[Literal["__end__"]]:
         result = joker_agent.invoke(state)
-        return Command(goto="task_router", update={"messages": result['messages']})
+        return Command(goto="__end__", update={"messages": result['messages']})
 
     return joker_node
 
@@ -81,9 +81,9 @@ def get_stock_information_retriever_node(llm: BaseChatModel) -> FunctionType:
         """
     )
 
-    def stock_information_retriever_node(state: State) -> Command[Literal["task_router"]]:
+    def stock_information_retriever_node(state: State) -> Command[Literal["__end__"]]:
         result = stock_information_retriever_agent.invoke(state)
-        return Command(goto="task_router", update={"messages": result['messages']})
+        return Command(goto="__end__", update={"messages": result['messages']})
 
     return stock_information_retriever_node
 
@@ -109,9 +109,9 @@ def get_stock_correlation_retriever_node(llm: BaseChatModel) -> FunctionType:
         """
     )
 
-    def stock_correlation_retriever_node(state: State) -> Command[Literal["task_router"]]:
+    def stock_correlation_retriever_node(state: State) -> Command[Literal["__end__"]]:
         result = stock_correlation_retriever_agent.invoke(state)
-        return Command(goto="task_router", update={"messages": result['messages']})
+        return Command(goto="__end__", update={"messages": result['messages']})
 
     return stock_correlation_retriever_node
 
@@ -141,8 +141,8 @@ def get_crash_predictor_node(llm: BaseChatModel) -> FunctionType:
         """
     )
 
-    def crash_predictor_node(state: State) -> Command[Literal["task_router"]]:
+    def crash_predictor_node(state: State) -> Command[Literal["__end__"]]:
         result = crash_predictor_agent.invoke(state)
-        return Command(goto="task_router", update={"messages": result['messages']})
+        return Command(goto="__end__", update={"messages": result['messages']})
 
     return crash_predictor_node
