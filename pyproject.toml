@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finport-agentic-chatbot"
+version = "0.1.0"
+description = "A Telegram bot with agentic AI capabilities for financial portfolio analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pyTelegramBotAPI",
+    "langchain-community",
+    "langchain-core",
+    "langchain-aws",
+    "langgraph",
+    "python-dotenv",
+    "boto3",
+    "requests",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
