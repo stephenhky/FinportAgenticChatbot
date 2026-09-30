@@ -7,7 +7,7 @@ name = "finport-agentic-chatbot"
 version = "0.1.0"
 description = "A Telegram bot with agentic AI capabilities for financial portfolio analysis"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "pyTelegramBotAPI",
     "langchain-community",
@@ -29,3 +29,5 @@ include = ["src*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
+
