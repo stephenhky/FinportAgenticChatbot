@@ -1,4 +1,5 @@
 pyTelegramBotAPI
+langchain
 langchain-community
 langchain-core
 langchain-aws
