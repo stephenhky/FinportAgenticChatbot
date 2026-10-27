@@ -1,6 +1,6 @@
-FROM public.ecr.aws/lambda/python:3.10
+FROM public.ecr.aws/lambda/python:3.13
 
-WORKDIR /code
+WORKDIR ${LAMBDA_TASK_ROOT}
 
 COPY requirements.txt .
 

@@ -48,6 +48,7 @@ def bot_webhook(message):
                     'body': json.dumps({'approach': 'webhook', 'text': 'Loop!'})
                 }
             else:
+                print(traceback.format_exc(), file=sys.stderr)
                 bot.send_message(message.chat.id, "Unknown error!")
                 return {
                     'statusCode': 200,

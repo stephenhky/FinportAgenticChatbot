@@ -11,7 +11,7 @@ from time import time
 from langchain_core.messages import AIMessage
 
 from agents.graph import FinportAgent
-from agents.aws import get_aws_bedrock_llm
+from clients.aws import get_aws_bedrock_llm
 
 
 load_dotenv()
@@ -43,12 +43,22 @@ def message_output_stream(agent_ai_message: AIMessage) -> Generator[OutputMessag
                 yield OutputMessage("image_url", content["image_url"])
 
 
+_agent_instance: FinportAgent | None = None
+
+
+def get_agent() -> FinportAgent:
+    """Return a singleton instance of FinportAgent."""
+    global _agent_instance
+    if _agent_instance is None:
+        llm = get_aws_bedrock_llm()
+        _agent_instance = FinportAgent(llm)
+    return _agent_instance
+
+
 @bot.message_handler(func=lambda message: True)
 def process_user_input_with_agent(message: telebot.types.Message):
-    # initialize agent
-    llm_id = os.environ.get('BEDROCK_LLM_ID')
-    llm = get_aws_bedrock_llm(llm_id)
-    agent = FinportAgent(llm)
+    # retrieve singleton agent
+    agent = get_agent()
 
     # process message
     return_contents = []
@@ -69,7 +79,7 @@ def process_user_input_with_agent(message: telebot.types.Message):
                         elif output_content.type == "image_url":
                             image_file = urllib.request.urlopen(output_content.content)
                             bot.send_photo(message.chat.id, image_file, "", reply_to_message_id=message.id)
-                    return_contents.append(output_content.to_dict())
+                        return_contents.append(output_content.to_dict())
         nb_retries += 1
         print(f"Number of retries: {nb_retries}", file=sys.stderr)
         if nb_retries > nb_max_retries:

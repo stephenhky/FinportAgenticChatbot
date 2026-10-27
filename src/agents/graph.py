@@ -6,7 +6,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import tools_condition
 
 from .state import State
-from .agents import get_task_router_node, get_joker_node, get_stock_information_retriever_node, \
+from .nodes import get_task_router_node, get_joker_node, get_stock_information_retriever_node, \
     get_stock_correlation_retriever_node, get_crash_predictor_node
 
 
