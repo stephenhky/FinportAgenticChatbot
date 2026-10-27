@@ -79,7 +79,7 @@ def process_user_input_with_agent(message: telebot.types.Message):
                         elif output_content.type == "image_url":
                             image_file = urllib.request.urlopen(output_content.content)
                             bot.send_photo(message.chat.id, image_file, "", reply_to_message_id=message.id)
-                    return_contents.append(output_content.to_dict())
+                        return_contents.append(output_content.to_dict())
         nb_retries += 1
         print(f"Number of retries: {nb_retries}", file=sys.stderr)
         if nb_retries > nb_max_retries:

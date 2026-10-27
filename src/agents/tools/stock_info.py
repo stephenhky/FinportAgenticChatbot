@@ -7,7 +7,9 @@ from langchain.tools import tool
 
 @tool
 def stock_information_retriever(symbol: str, startdate: str, enddate: str) -> str:
-    """Compute information for a given stock with a given date range, with dates in the format YYYY-mm-dd."""
+    """Compute return, volatility, downside/upside risk, and beta for a given stock over a multi-day date range.
+    Dates must be in YYYY-mm-dd format and startdate must be strictly earlier than enddate (spanning at least several trading days).
+    """
     payload = {'symbol': symbol, 'startdate': startdate, 'enddate': enddate}
     headers = {'Content-Type': 'application/json'}
     response = requests.request(
