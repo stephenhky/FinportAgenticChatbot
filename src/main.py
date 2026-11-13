@@ -73,8 +73,8 @@ def handler(event, context):
     print(event)
     print(type(event))
     # Process the update with your bot logic
-    message = json.loads(event['body'])
     try:
+        message = json.loads(event['body'])
         if message.get('polling', False):
             return bot_polling()
         else:
