@@ -5,7 +5,7 @@ Simulates Telegram webhook calls to the AWS Lambda handler (`main.handler`)
 so you can chat with the bot from your terminal. Outbound Telegram API calls
 (reply_to / send_message / send_photo) are intercepted and printed instead of
 being sent to Telegram, so no real Telegram token or network access to Telegram
-is required. AWS Bedrock and the tool APIs are still called for real.
+is required. AWS Bedrock and the Finport MCP server are still called for real.
 
 Usage (after `pip install -e .`):
     finport-chat                    # interactive chat
