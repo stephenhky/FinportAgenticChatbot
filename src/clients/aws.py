@@ -28,6 +28,8 @@ def get_aws_bedrock_llm(bedrock_llm_id: str | None = None) -> ChatBedrockConvers
             model_id,
             model_provider="bedrock_converse",
             client=bedrock_runtime,
-            config={"max_tokens": 4096, "temperature": 0.7, "top_p": 0.8}
+            max_tokens=4096,
+            temperature=0.7,
+            top_p=0.8,
         )
     return _bedrock_llm_instance
