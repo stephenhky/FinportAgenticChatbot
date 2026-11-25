@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "finport-agentic-chatbot"
-version = "0.2.0a2"
+version = "0.2.0a3"
 description = "A Telegram bot with agentic AI capabilities for financial portfolio analysis"
 readme = "README.md"
 requires-python = ">=3.11"
