@@ -7,6 +7,7 @@ from unittest.mock import patch
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 from botocore.exceptions import ClientError
+from clients import aws as aws_client
 from src import main
 
 
@@ -132,6 +133,30 @@ class TestLambdaHandler(unittest.TestCase):
         
         self.assertEqual(response['statusCode'], 500)
         self.assertEqual(json.loads(response['body']), {"message": "Internal Server Error"})
+
+
+class TestAwsBedrockConfig(unittest.TestCase):
+
+    def setUp(self):
+        aws_client._bedrock_llm_instance = None
+
+    def tearDown(self):
+        aws_client._bedrock_llm_instance = None
+
+    def test_default_temperature(self):
+        with patch.dict(os.environ, {}, clear=True):
+            kwargs = aws_client._build_inference_kwargs()
+        self.assertEqual(kwargs, {"max_tokens": 4096, "temperature": 0.7})
+
+    def test_custom_temperature(self):
+        with patch.dict(os.environ, {"TEMPERATURE": "0.3"}, clear=True):
+            kwargs = aws_client._build_inference_kwargs()
+        self.assertEqual(kwargs, {"max_tokens": 4096, "temperature": 0.3})
+
+    def test_custom_top_p_omits_default_temperature(self):
+        with patch.dict(os.environ, {"TOP_P": "0.8"}, clear=True):
+            kwargs = aws_client._build_inference_kwargs()
+        self.assertEqual(kwargs, {"max_tokens": 4096, "top_p": 0.8})
 
 
 if __name__ == '__main__':

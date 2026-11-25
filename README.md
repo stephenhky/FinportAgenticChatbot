@@ -36,6 +36,8 @@ Environment variables, read from `.env` locally or from the AWS Lambda configura
 |---|---|---|
 | `API_KEY` | yes (Lambda) | Telegram bot token. |
 | `BEDROCK_LLM_ID` | yes | AWS Bedrock model ID. |
+| `TEMPERATURE` | no | LLM sampling temperature (default `0.7` when neither `TEMPERATURE` nor `TOP_P` is set; also accepts `BEDROCK_TEMPERATURE`). |
+| `TOP_P` | no | LLM nucleus sampling `top_p` (also accepts `BEDROCK_TOP_P`). Note: some Bedrock models (e.g. Claude 4.5) do not allow setting both `TEMPERATURE` and `TOP_P`. |
 | `AWS_REGION` | no | Bedrock region (default `us-east-1`; set automatically on Lambda). |
 | `MCP_SERVER_URL` | yes | Finport MCP server endpoint, e.g. `https://<id>.lambda-url.<region>.on.aws/mcp`. If only the base URL is given, `/mcp` is appended. |
 | `MCP_SERVER_AUTH_TOKEN` | no | Sent as `Authorization: Bearer <token>` to the MCP server, if it is protected. |
