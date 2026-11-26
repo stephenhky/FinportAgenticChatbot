@@ -41,8 +41,11 @@ Environment variables, read from `.env` locally or from the AWS Lambda configura
 | `AWS_REGION` | no | Bedrock region (default `us-east-1`; set automatically on Lambda). |
 | `MCP_SERVER_URL` | yes | Finport MCP server endpoint, e.g. `https://<id>.lambda-url.<region>.on.aws/mcp`. If only the base URL is given, `/mcp` is appended. |
 | `MCP_SERVER_AUTH_TOKEN` | no | Sent as `Authorization: Bearer <token>` to the MCP server, if it is protected. |
-| `MCP_TIMEOUT_SECONDS` | no | HTTP timeout for MCP calls (default `50`, below the 59 s Lambda timeout). |
+| `MCP_TIMEOUT_SECONDS` | no | HTTP timeout for MCP calls (default `50`). |
 | `MAX_RETRIES` | no | Maximum number of LLM turns per message before giving up (default `5`). |
+| `BEDROCK_READ_TIMEOUT_SECONDS` | no | Socket read timeout for AWS Bedrock calls (default `60`). |
+| `ASYNC_SELF_INVOKE` | no | Set to `false` to disable async self-invocation and process webhooks synchronously (default `true` on Lambda). |
+| `TELEGRAM_WEBHOOK_SECRET` | no | Optional secret token verified against Telegram's `X-Telegram-Bot-Api-Secret-Token` header. |
 
 `STOCKINFO_API_URL`, `STOCKCORR_API_URL` and `CRASH_PREDICTOR_API_URL` are no longer used.
 
@@ -77,22 +80,33 @@ You can deploy this application as a container image to AWS Lambda (e.g. via Ama
    docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/finport-telegram-bot:latest
    ```
 
-3. **Deploy or Update AWS Lambda Function**:
-   When creating or updating your Lambda function, configure the timeout to **59 seconds** (recommended for LLM reasoning and API calls):
+3. **Deploy or Update AWS Lambda Function (Async Self-Invoke Pattern)**:
+   Incoming Telegram webhooks immediately return `200 OK` and invoke the same Lambda function asynchronously (`InvocationType="Event"`) to run the LangGraph + MCP agent in the background, preventing Telegram webhook timeouts and multi-hour retry backoffs.
+
+   Create or update your Lambda function with a generous worker timeout (e.g. **180 seconds**):
    ```bash
    aws lambda create-function \
        --function-name finport-telegram-bot \
        --package-type Image \
        --code ImageUri=<aws_account_id>.dkr.ecr.<region>.amazonaws.com/finport-telegram-bot:latest \
        --role <lambda_execution_role_arn> \
-       --timeout 59
+       --timeout 180
    ```
    Or update the timeout for an existing function:
    ```bash
    aws lambda update-function-configuration \
        --function-name finport-telegram-bot \
-       --timeout 59
+       --timeout 180
    ```
 
-4. **Configure environment variables** in the Lambda configuration tab (see [Configuration](#configuration)); in particular
+4. **Disable Automatic Async Retries & Grant Self-Invoke IAM Permission**:
+   - Ensure `<lambda_execution_role_arn>` allows `lambda:InvokeFunction` on `arn:aws:lambda:<region>:<aws_account_id>:function:finport-telegram-bot` (if omitted, the handler logs a warning and falls back to synchronous execution).
+   - Disable AWS Lambda's default 2x retry on async `Event` invocations so failed turns are not replayed:
+     ```bash
+     aws lambda put-function-event-invoke-config \
+         --function-name finport-telegram-bot \
+         --maximum-retry-attempts 0
+     ```
+
+5. **Configure environment variables** in the Lambda configuration tab (see [Configuration](#configuration)); in particular
    set `MCP_SERVER_URL` to the endpoint of the deployed Finport MCP server.

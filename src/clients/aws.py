@@ -11,6 +11,7 @@ load_dotenv()
 
 DEFAULT_TEMPERATURE = 0.7
 DEFAULT_MAX_TOKENS = 4096
+DEFAULT_READ_TIMEOUT_SECONDS = 60
 
 _bedrock_llm_instance: ChatBedrockConverse | None = None
 
@@ -44,10 +45,11 @@ def get_aws_bedrock_llm(bedrock_llm_id: str | None = None) -> ChatBedrockConvers
     global _bedrock_llm_instance
     if _bedrock_llm_instance is None:
         model_id = bedrock_llm_id or os.environ.get("BEDROCK_LLM_ID")
+        read_timeout = int(os.environ.get("BEDROCK_READ_TIMEOUT_SECONDS", DEFAULT_READ_TIMEOUT_SECONDS))
         bedrock_runtime = boto3.client(
             service_name="bedrock-runtime",
             region_name=os.environ.get("AWS_REGION", "us-east-1"),
-            config=Config(read_timeout=1024),
+            config=Config(read_timeout=read_timeout),
             # aws_access_key_id=os.environ.get("AWS_ACC_ACCESS_TOKEN"),
             # aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY")
         )

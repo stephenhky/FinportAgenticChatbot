@@ -76,6 +76,8 @@ def _load_lambda_handler(env_file: str | None) -> ModuleType:
     # enough because outbound Telegram calls are intercepted below.
     if not os.environ.get("API_KEY"):
         os.environ["API_KEY"] = "000000000:LOCAL_CLI_DUMMY_TOKEN"
+    # Always run synchronously in-process when chatting from the local CLI.
+    os.environ["ASYNC_SELF_INVOKE"] = "false"
 
     import main as lambda_main
     from bot import bot
